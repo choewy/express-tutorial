@@ -2,7 +2,7 @@
 
 본 프로젝트는 Node.js에서 express와 MongoDB를 사용하기 위한 튜토리얼이며, 이를 위해 간단한 Rest API 서버 및 Todo 앱을 구현하였다.
 
-- server는 추후 heroku에서 구동할 예정
+- [추후 heroku에서 server를 구동하여 배포할 예정]
 
 ## 의존성
 
