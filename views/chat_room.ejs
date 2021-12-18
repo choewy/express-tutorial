@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+
+    <title>NODE TODO APP | CHAT</title>
+  </head>
+  <body>
+    <!-- NAV BAR -->
+    <div class="fixed-top">
+      <div class="collapse" id="navbarToggleExternalContent">
+        <div class="bg-dark p-4">
+          <h5 class="text-white h4">NODE TODO APP</h5>
+          <span class="text-muted">Node.js로 구현한 Todo App</span>
+          <ul class=" navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+            <a class="nav-link text-muted" href="/">홈</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link text-muted" href="/item">목록</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link text-white" href="/chat">채팅</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link text-muted" href="/upload">웹하드</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <nav class="navbar navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </nav>
+    </div>
+
+      <!-- CONTENT -->
+      <div class="container mt-5 pt-5">
+        <h4 class="mb-4 justify-content-between"><%= chat.title %></h4>
+        <p><%= chat.description %></p>
+        <p>생성자 : <%= chat.account %> | 생성일자 : <%= chat.date %></p>
+      
+      </div>
+        <div class="container">
+        <ul class="list-group">
+          <li class="list-group-item li-messages pre-scrollable"></li>
+        </ul>
+      </div>
+
+      <form class="container form-message" data-id="<%= chat._id%>">
+        <input name="content" class="input-message"><button type="submit">전송</button>
+      </form>
+      <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      // 데이터 스트림 이벤트 리스너 추가
+        const _id = $('.form-message')[0].dataset.id;
+        const eventSource = new EventSource(`/chat/${_id}/messages`);
+        eventSource.addEventListener('getMessages', event => {
+          const messageList = $('.li-messages');
+          messageList.children().remove();
+          JSON.parse(event.data).forEach(message => {
+            messageList.append(`<p>(${message.date}) ${message.account}: ${message.content}</p>`);
+          });
+          messageList.scrollTop(messageList[0].scrollHeight);
+        });
+
+        // 메시지 추가 시 이벤트
+        $('.form-message').submit(e => {
+          e.preventDefault();
+          const content = $('.input-message').val();
+          $.post(`/chat/${_id}/add`, {content: content});
+          $('.input-message').val('');
+        });
+    </script>
+  </body>
+</html>
